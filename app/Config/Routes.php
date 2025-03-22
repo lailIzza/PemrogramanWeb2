@@ -15,3 +15,6 @@ $routes->get('/Tos', 'Page/tos');
 
 // aoutoroute > untuk mematikan ubah value :false
 // $routes->setAutoRoute(true);
+
+//router untuk tugas
+$routes->get('/Biodata', 'Page::biodata');
