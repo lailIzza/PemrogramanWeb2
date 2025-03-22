@@ -15,4 +15,14 @@ class Page extends BaseController {
     public function tos(){
         echo "halaman tos";
     }
+
+    //tugas
+    public function biodata(){
+        echo "Biodata <br>";
+        echo "---------- <br>";
+        echo "Nama : Laila <br>";
+        echo "Umur : 20 <br>";
+        echo "Kelas : B <br>";
+    }
+
 }
