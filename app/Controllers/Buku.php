@@ -42,6 +42,11 @@ class Buku extends BaseController
             'validation' => \Config\Services::validation(),
             'active_nav' => 'tambah'   //nav-link agar active
         ];
+
+        //cek apakah session punya validasi lain?
+        if(session()->has('validation')){
+            $data['validation'] = session('validation');
+        }
         return view('buku_view/buat', $data);
     }
     public function simpan(){
@@ -54,14 +59,26 @@ class Buku extends BaseController
             'judul' => [
                 'rules' => 'required|is_unique[buku_sql.judul]',
                 'errors' => [
-                    'required' => '{field} buku harus diisi',
+                    'required' => '{field} Judul buku harus diisi',
                     'is_unique' => '{field} buku sudah ada'
                 ]
             ],
-            'penulis' => 'required',
-            'penerbit' => 'required'
+            'penulis' => [
+                'rules' => 'required|is_unique[buku_sql.penulis]',
+                'errors' => [
+                    'required' => '{field} Nama penulis harus diisi',
+                    'is_unique' => '{field} sudah terdaftar di buku lain'
+                ]
+            ],
+            'penerbit' => [
+                'rules' => 'required|is_unique[buku_sql.penerbit]',
+                'errors' => [
+                    'required' => '{field} Nama penerbit harus diisi',
+                    'is_unique' => '{field} sudah terdaftar di buku lain'
+                ]
+            ],
         ])) {
-            return redirect()->to('/buku/buat')->withInput()->with('validation', $this->validator);
+            return redirect()->to('/buat')->withInput()->with('validation', $this->validator);
         }
 
         $slug = url_title($this->request->getVar('judul'), '-', true);
@@ -109,6 +126,18 @@ class Buku extends BaseController
             $rule_judul = 'required';
         } else {
             $rule_judul = 'required|is_unique[buku_sql.judul]';
+        }
+
+        if ($bukuLama['penulis'] == $this->request->getVar('penulis')){
+            $rule_penulis = 'required';
+        } else {
+            $rule_penulis = 'required|is_unique[buku_sql.penulis]';
+        }
+
+        if ($bukuLama['penerbit'] == $this->request->getVar('penerbit')){
+            $rule_penerbit = 'required';
+        } else {
+            $rule_penerbit = 'required|is_unique[buku_sql.penerbit]';
         }
 
         //validasi input
