@@ -1,0 +1,18 @@
+
+.sampul {
+    width: 100px;
+}
+
+.table > tbody > tr > * {
+    vertical-align: middle;
+}
+
+.btn-success {
+    background-color: #6828a7;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
