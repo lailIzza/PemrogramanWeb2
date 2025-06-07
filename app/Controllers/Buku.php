@@ -120,13 +120,6 @@ class Buku extends BaseController
             unlink('asset/gambar/' . $buku['sampul']);
         }
 
-        // if ($buku['sampul'] != 'no-cover.jpg') {
-        //     $path = 'asset/gambar/' . $buku['sampul'];
-        //     if (file_exists($path)) {
-        //         unlink($path);
-        //     }
-        // }
-
         $this->bukuModel->delete($id);
         session()->setFlashdata('pesan', 'Data berhasil dihapus');
         return redirect()->to('/');
