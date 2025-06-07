@@ -49,11 +49,7 @@ class Buku extends BaseController
         }
         return view('buku_view/buat', $data);
     }
-    public function simpan(){
-    try {
-        // Debug data input
-        // dd($this->request->getPost());
-        
+    public function simpan(){ 
         //validasi input
         if (!$this->validate([
             'judul' => [
@@ -77,8 +73,29 @@ class Buku extends BaseController
                     'is_unique' => '{field} sudah terdaftar di buku lain'
                 ]
             ],
+            'sampul' => [
+                'rules' => 'max_size[sampul,1024]|is_image[sampul]|mime_in[sampul,image/jpg,image/jpeg,image/png]',
+                'errors' => [
+                    // 'uploaded' => 'Pilihlah gambar yang sesuai',
+                    'max_size' => 'Ukuran file kebesaran',
+                    'is_image' => 'File yang anda pilih bukan gambar',
+                    'mime_in' => 'File yang anda pilih bukan gambar'
+                ]
+            ],
         ])) {
             return redirect()->to('/buat')->withInput()->with('validation', $this->validator);
+        }
+
+        //konfigurasi file unggah
+        $gambarSampul = $this->request->getFile('sampul');
+
+        if($gambarSampul->getError()==4){
+            $namaSampul = 'no-cover.jpg';
+        } else {
+            $namaSampul = $gambarSampul->getRandomName(); //generate nama gambar
+            $gambarSampul -> move ('asset/gambar' , $namaSampul); //pindah file gambar
+
+            // $namaSampul = $gambarSampul->getName();
         }
 
         $slug = url_title($this->request->getVar('judul'), '-', true);
@@ -87,23 +104,29 @@ class Buku extends BaseController
             'slug' => $slug,
             'penulis' => $this->request->getVar('penulis'),
             'penerbit' => $this->request->getVar('penerbit'),
-            'sampul' => $this->request->getVar('sampul')
+            'sampul' => $namaSampul
         ];
-
-        // Debug data sebelum save
-        // dd($data);
-
+        
         $this->bukuModel->save($data);
 
         session()->setFlashdata('pesan', 'Selamat, data berhasil ditambahkan');
         return redirect()->to('/');
 
-    } catch (\Exception $e) {
-        // Tampilkan error sebenarnya
-        die($e->getMessage());
-    }
 }
     public function hapus($id){
+        $buku = $this->bukuModel->find($id); //cari nama gambar
+
+        if($buku['sampul'] != 'no-cover.jpg'){
+            unlink('asset/gambar/' . $buku['sampul']);
+        }
+
+        // if ($buku['sampul'] != 'no-cover.jpg') {
+        //     $path = 'asset/gambar/' . $buku['sampul'];
+        //     if (file_exists($path)) {
+        //         unlink($path);
+        //     }
+        // }
+
         $this->bukuModel->delete($id);
         session()->setFlashdata('pesan', 'Data berhasil dihapus');
         return redirect()->to('/');
@@ -154,6 +177,21 @@ class Buku extends BaseController
             return redirect()->to('buku/edit' . $this->request->getVar('slug'))->withInput()->with('validation', $validation);
         }
 
+        //konfigurasi file unggah
+        $gambarSampul = $this->request->getFile('sampul');
+
+        if($gambarSampul->getError()==4){
+            $namaSampul = $this->request->getVar('sampulLama');
+        } else {
+            $namaSampul = $gambarSampul->getRandomName(); //generate nama gambar
+            $gambarSampul -> move ('asset/gambar' , $namaSampul); //pindah file gambar
+            
+            // $namaSampul = $gambarSampul->getName();
+
+            unlink('asset/gambar/' . $this->request->getVar('sampulLama'));
+        }
+
+
         $slug = url_title($this->request->getVar('judul'), '-', true);
         $this->bukuModel->save([
             'id' => $id,
@@ -161,11 +199,15 @@ class Buku extends BaseController
             'slug' => $slug,
             'penulis' => $this->request->getVar('penulis'),
             'penerbit' => $this->request->getVar('penerbit'),
-            'sampul' => $this->request->getVar('sampul')
+            'sampul' => $namaSampul
         ]);
 
         session()->setFlashdata('pesan', 'Data berhasil di ubah');
 
         return redirect()->to('/');
+    }
+
+    public function tes(){
+        return view('buku_view/tes');
     }
 }
