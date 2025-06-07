@@ -11,7 +11,7 @@
             <?php if (isset($validation)) : ?>
             <?php endif; ?>
 
-            <form action="<?= base_url('/simpan'); ?>" method="post">
+            <form action="<?= base_url('/simpan'); ?>" method="post" enctype="multipart/form-data">
                 <?= csrf_field(); ?>
                 <div class="mb-3 row">
                     <label for="judul" class="col-sm-2 col-form-label">Judul</label>
@@ -40,10 +40,21 @@
                         </div>
                     </div>
                 </div>
-                <div class="mb-3 row">
+
+                <div class="row mb-3">
                     <label for="sampul" class="col-sm-2 col-form-label">Sampul</label>
-                    <div class="col-sm-10">
-                        <input type="sampul" class="form-control" id="sampul" name="sampul" value="<?= old('sampul'); ?>">
+                    <div class="col-sm-2">
+                        <img src="asset/gambar/no-cover.jpg" class="img-thumbnail img_preview" alt="">
+                    </div>
+
+                    <div class="col-sm-8">
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control <?= ($validation->hasError('sampul')) ? 'is-invalid' : ''; ?> " id="sampul" name="sampul" onchange="previewImage()">
+                            <div class="invalid-feedback">
+                                <?= $validation->getError('sampul'); ?>
+                            </div>
+                        </div>
+                        <label for="sampul" class="input-group-text">Upload</label>
                     </div>
                 </div>
 
