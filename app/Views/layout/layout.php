@@ -25,4 +25,23 @@
 
     <?= $this->renderSection('content')?>
 
+   <script>
+    function previewImage() {
+        const sampul = document.querySelector('#sampul');
+        const sampulLabel = document.querySelector('.input-group-text');
+        const imgPreview = document.querySelector('.img_preview');
+
+        if (sampul.files.length > 0) {
+            sampulLabel.textContent = sampul.files[0].name;
+
+            const fileSampul = new FileReader();
+            fileSampul.readAsDataURL(sampul.files[0]);
+
+            fileSampul.onload = function(e) {
+                imgPreview.src = e.target.result;
+            }
+        }
+    }
+</script>
+
 </body>
