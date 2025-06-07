@@ -22,8 +22,11 @@ use CodeIgniter\Router\RouteCollection;
 //router pertemuan ke8
 $routes->get('/', 'Buku::index');
 $routes->get('/detail/(:segment)', 'Buku::detail/$1');
+
+//router pertemuan ke9
 $routes->get('/buat', 'Buku::buat');
 $routes->post('/simpan', 'Buku::simpan');
 $routes->delete('/hapus/(:num)', 'Buku::hapus/$1');
 $routes->get('/edit/(:segment)', 'Buku::edit/$1');
 $routes->post('/update/(:num)', 'Buku::update/$1');
+$routes->get('/tes', 'Buku::tes');
